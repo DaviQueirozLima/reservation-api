@@ -1,0 +1,166 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  CLIENT
+  BARBER
+  ADMIN
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  FINISHED
+}
+
+enum WaitlistStatus {
+  PENDING
+  NOTIFIED
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+model User {
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+  role     Role   @default(CLIENT)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations (vamos usar depois)
+  appointmentsAsClient Appointment[] @relation("ClientAppointments")
+  appointmentsAsBarber Appointment[] @relation("BarberAppointments")
+
+  barbershopId String?
+  barbershop   Barbershop? @relation(fields: [barbershopId], references: [id])
+
+  ownedBarbershops Barbershop[]    @relation("BarbershopOwner")
+  barberServices   BarberService[]
+  clientWaitlists  Waitlist[]      @relation("ClientWaitlists")
+  barberWaitlists  Waitlist[]      @relation("BarberWaitlists")
+}
+
+model Appointment {
+  id String @id @default(uuid())
+
+  startAt DateTime
+  endAt   DateTime
+  status  AppointmentStatus @default(PENDING)
+
+  clientId        String
+  barberId        String
+  barbershopId    String
+  barberServiceId String
+
+  client        User          @relation("ClientAppointments", fields: [clientId], references: [id])
+  barber        User          @relation("BarberAppointments", fields: [barberId], references: [id])
+  barbershop    Barbershop    @relation(fields: [barbershopId], references: [id])
+  barberService BarberService @relation(fields: [barberServiceId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([barberId, startAt])
+  @@index([barbershopId])
+}
+
+model Barbershop {
+  id      String  @id @default(uuid())
+  name    String
+  address String?
+  city    String?
+  state   String?
+
+  ownerId String
+  owner   User   @relation("BarbershopOwner", fields: [ownerId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  barbers        User[]
+  appointments   Appointment[]
+  services       Service[]
+  barberServices BarberService[]
+  waitlists      Waitlist[]
+}
+
+model Service {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  imageUrl    String?
+
+  // se for null → corte global do sistema
+  // se tiver valor → corte criado por uma barbearia
+  barbershopId String?
+  barbershop   Barbershop? @relation(fields: [barbershopId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  barberServices BarberService[]
+}
+
+model BarberService {
+  id String @id @default(uuid())
+
+  barberId     String
+  barbershopId String
+  serviceId    String
+
+  durationInMin Int
+  price         Decimal
+
+  barber     User       @relation(fields: [barberId], references: [id])
+  barbershop Barbershop @relation(fields: [barbershopId], references: [id])
+  service    Service    @relation(fields: [serviceId], references: [id])
+
+  appointments Appointment[]
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  waitlists Waitlist[]
+ 
+  @@unique([barberId, serviceId])
+}
+
+model Waitlist {
+  id String @id @default(uuid())
+
+  startAt DateTime
+  status  WaitlistStatus @default(PENDING)
+
+  clientId        String
+  barberId        String
+  barbershopId    String
+  barberServiceId String
+
+  client        User          @relation("ClientWaitlists", fields: [clientId], references: [id])
+  barber        User          @relation("BarberWaitlists", fields: [barberId], references: [id])
+  barbershop    Barbershop    @relation(fields: [barbershopId], references: [id])
+  barberService BarberService @relation(fields: [barberServiceId], references: [id])
+
+  createdAt  DateTime  @default(now())
+  notifiedAt DateTime?
+  acceptedAt DateTime?
+  declinedAt DateTime?
+}
