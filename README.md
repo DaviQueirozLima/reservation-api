@@ -1,98 +1,86 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Barber Reservation API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API de agendamento para barbearias desenvolvida com **NestJS**, **Prisma** e **PostgreSQL**.  
+O projeto implementa autenticação com **JWT**, organização por módulos e segue boas práticas de arquitetura para aplicações backend modernas.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Este repositório representa um projeto em evolução, construído feature por feature.
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Tecnologias Utilizadas
 
-## Project setup
+- NestJS
+- TypeScript
+- Prisma ORM
+- PostgreSQL
+- JWT (JSON Web Token)
+- Passport
+- Bcrypt
 
-```bash
-$ npm install
-```
+---
 
-## Compile and run the project
+## Visão Geral da Arquitetura
 
-```bash
-# development
-$ npm run start
+A aplicação é organizada em módulos, cada um com responsabilidades bem definidas:
 
-# watch mode
-$ npm run start:dev
+- **DatabaseModule**
+  - Centraliza a conexão com o banco de dados
+  - Expõe o `PrismaService` para toda a aplicação
 
-# production mode
-$ npm run start:prod
-```
+- **AuthModule**
+  - Responsável por autenticação
+  - Implementa signup, signin e proteção de rotas
+  - Utiliza JWT + Passport Strategy
 
-## Run tests
+Outros módulos de negócio (Appointments, Waitlist, etc.) serão adicionados posteriormente.
 
-```bash
-# unit tests
-$ npm run test
+---
 
-# e2e tests
-$ npm run test:e2e
+## Banco de Dados
 
-# test coverage
-$ npm run test:cov
-```
+- PostgreSQL como banco relacional
+- Prisma como ORM
+- Migrations versionadas
+- Prisma Client gerado automaticamente
 
-## Deployment
+### Models principais
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+- User
+- Barbershop
+- Service
+- BarberService
+- Appointment
+- Waitlist
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+---
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+## Autenticação (AuthModule)
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+A autenticação foi implementada seguindo o padrão profissional do NestJS utilizando **JWT + Passport**.
 
-## Resources
+### Funcionalidades
 
-Check out a few resources that may come in handy when working with NestJS:
+- Criação de usuário (Signup)
+- Login de usuário (Signin)
+- Senhas criptografadas com bcrypt
+- Geração de JWT no login
+- Validação de token via JwtStrategy
+- Proteção de rotas com JwtAuthGuard
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+---
 
-## Support
+## Fluxo de Autenticação
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+1. O usuário cria uma conta (`signup`)
+2. O usuário realiza login (`signin`)
+3. O sistema retorna um `access_token` (JWT)
+4. O token deve ser enviado no header `Authorization`
+5. Rotas protegidas validam o token automaticamente
+6. O usuário autenticado fica disponível em `req.user`
 
-## Stay in touch
+---
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Endpoints de Autenticação
 
-## License
+### Signup – Criar conta
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
