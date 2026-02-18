@@ -84,3 +84,6 @@ A autenticação foi implementada seguindo o padrão profissional do NestJS util
 
 ### Signup – Criar conta
 
+### Signin – Logar conta
+
+### Profile – Perfil conta
